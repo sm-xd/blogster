@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const { createHmac, randomBytes } = require("crypto");
+
 const userSchema = new Schema({
     fullName: {
         type:String,
@@ -12,7 +13,6 @@ const userSchema = new Schema({
     },
     salt: {
         type:String,
-        required: true,
     },
     password: {
         type:String,
@@ -36,7 +36,7 @@ userSchema.pre("save", function (next){
     if(!user.isModified("password")) return;
 
     const salt = randomBytes(16).toString();
-    const hashedPassword = createHman('sha256', salt)
+    const hashedPassword = createHmac('sha256', salt)
         .update(user.password)
         .digest('hex');
     
@@ -46,6 +46,6 @@ userSchema.pre("save", function (next){
     next();
 });
 
-const User = model('User', userSchema);
+const User = model('user', userSchema);
 
 module.exports = User;
